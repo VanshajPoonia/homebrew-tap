@@ -28,7 +28,7 @@ The npm package is [`blowhorn-tells`](https://www.npmjs.com/package/blowhorn-tel
 
 `--server-only` needs nothing else. The default browser run loads Playwright, which a Homebrew install cannot find. For browser runs, use the npm install: `npm i -g blowhorn-tells playwright && npx playwright install chromium`.
 
-The formula currently installs from the `v0.3.12` Git tag of [blowhorn-ai/tells](https://github.com/blowhorn-ai/tells). When an npm release of `blowhorn-tells` is newer than that version, `.github/workflows/update-formula.yml` rewrites `Formula/tells.rb` from the npm tarball.
+The formula currently installs from the `v0.3.12` Git tag of [blowhorn-ai/tells](https://github.com/blowhorn-ai/tells). When npm latest is at least that version, `.github/workflows/update-formula.yml` rewrites `Formula/tells.rb` from the npm tarball. A lower npm version, or the staged-publishing placeholder, leaves the formula in place.
 
 ## Blowhorn CLI
 
@@ -46,7 +46,7 @@ blowhorn setup
 `.github/workflows/update-formula.yml` runs every six hours and on demand (Actions > Update formula > Run workflow). It:
 
 1. reads the latest `blowhorn-tells` version and its tarball from the public npm registry, and checks the tarball against the registry's sha512 integrity,
-2. leaves the formula unchanged when that version is npm's staged-publishing placeholder, or is not newer than the version already in `Formula/tells.rb`,
+2. leaves the formula unchanged when that version is npm's staged-publishing placeholder, or is older than the version already in `Formula/tells.rb`,
 3. otherwise clones [blowhorn-ai/tells](https://github.com/blowhorn-ai/tells) at the `v<version>` tag that matches that npm release (or a `tells_ref` you pass when running the workflow by hand) and renders `Formula/tells.rb` with `scripts/render-homebrew-formula.mjs`, which reads the package, tap and formula names from `schemas/cli-release.json`,
 4. if the formula changed, runs `brew install`, `brew test` and `brew audit` on it, then commits `tells <version>` and pushes.
 

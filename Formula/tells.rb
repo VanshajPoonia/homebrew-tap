@@ -1,9 +1,9 @@
 # The v0.3.12 Git tag of https://github.com/blowhorn-ai/tells.
 # blowhorn-tells is on the public npm registry. .github/workflows/update-formula.yml
-# rewrites this file from the npm tarball when npm latest is newer than this
+# rewrites this file from the npm tarball when npm latest is at least this
 # formula's version, using scripts/render-homebrew-formula.mjs --from-npm in
-# blowhorn-ai/tells. Do not delete this formula: a scheduled run that finds no
-# newer npm release leaves this file in place.
+# blowhorn-ai/tells. Do not delete this formula: a scheduled run that finds an
+# older npm release, or the staged-publishing placeholder, leaves this file in place.
 
 class Tells < Formula
   desc "Bot-detection and browser fingerprint check that prints a JSON verdict"
