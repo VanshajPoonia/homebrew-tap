@@ -10,16 +10,25 @@ brew tap blowhorn-ai/tap
 
 [Tells](https://tells.blowhorn.ai) runs the Blowhorn Tells bot-detection check from a terminal and prints the JSON report and a one-line verdict.
 
+Install with npm:
+
+```bash
+npm i -g blowhorn-tells
+tells --server-only
+```
+
+Or with Homebrew, which also installs Node:
+
 ```bash
 brew install blowhorn-ai/tap/tells
 tells --server-only
 ```
 
-`brew install` pulls in Homebrew's `node` and links the `tells` command. `tells --help` lists the flags and exit codes; the [Tells README](https://github.com/blowhorn-ai/tells#cli) documents the output.
+The npm package is [`blowhorn-tells`](https://www.npmjs.com/package/blowhorn-tells); the command it puts on PATH is `tells`. `tells --help` lists the flags and exit codes; the [Tells README](https://github.com/blowhorn-ai/tells#cli) documents the output.
 
-`--server-only` needs nothing else. The default browser run loads Playwright, which a Homebrew install cannot find. For browser runs install with npm instead: `npm i -g blowhorn-tells playwright && npx playwright install chromium`.
+`--server-only` needs nothing else. The default browser run loads Playwright, which a Homebrew install cannot find. For browser runs, use the npm install: `npm i -g blowhorn-tells playwright && npx playwright install chromium`.
 
-The formula currently installs from the `v0.3.12` Git tag of [blowhorn-ai/tells](https://github.com/blowhorn-ai/tells), because the `blowhorn-tells` package is not yet on the public npm registry. When that package is published, `.github/workflows/update-formula.yml` will rewrite `Formula/tells.rb` from the npm tarball.
+The formula currently installs from the `v0.3.12` Git tag of [blowhorn-ai/tells](https://github.com/blowhorn-ai/tells). When an npm release of `blowhorn-tells` is newer than that version, `.github/workflows/update-formula.yml` rewrites `Formula/tells.rb` from the npm tarball.
 
 ## Blowhorn CLI
 
@@ -34,13 +43,12 @@ blowhorn setup
 
 ## How the Tells formula stays current
 
-Once `blowhorn-tells` is on the public npm registry, `.github/workflows/update-formula.yml` runs every six hours and on demand (Actions > Update formula > Run workflow). It:
+`.github/workflows/update-formula.yml` runs every six hours and on demand (Actions > Update formula > Run workflow). It:
 
 1. reads the latest `blowhorn-tells` version and its tarball from the public npm registry, and checks the tarball against the registry's sha512 integrity,
-2. clones [blowhorn-ai/tells](https://github.com/blowhorn-ai/tells) at the `v<version>` tag that matches that npm release (or a `tells_ref` you pass when running the workflow by hand) and renders `Formula/tells.rb` with `scripts/render-homebrew-formula.mjs`, which reads the package, tap and formula names from `schemas/cli-release.json`,
-3. if the formula changed, runs `brew install`, `brew test` and `brew audit` on it, then commits `tells <version>` and pushes.
-
-Until the npm package exists, a scheduled run leaves the committed Git-tag formula in place and exits successfully.
+2. leaves the formula unchanged when that version is npm's staged-publishing placeholder, or is not newer than the version already in `Formula/tells.rb`,
+3. otherwise clones [blowhorn-ai/tells](https://github.com/blowhorn-ai/tells) at the `v<version>` tag that matches that npm release (or a `tells_ref` you pass when running the workflow by hand) and renders `Formula/tells.rb` with `scripts/render-homebrew-formula.mjs`, which reads the package, tap and formula names from `schemas/cli-release.json`,
+4. if the formula changed, runs `brew install`, `brew test` and `brew audit` on it, then commits `tells <version>` and pushes.
 
 It uses only this repo's `GITHUB_TOKEN` (`contents: write`). There is no npm token and no cross-repo secret. GitHub turns off scheduled workflows in a public repo after 60 days without activity; if that happens, re-enable the workflow under Actions or run it by hand after a release.
 
